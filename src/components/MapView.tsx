@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {StyleSheet, View, Alert} from 'react-native';
 import GeoLocation, {GeoPosition} from 'react-native-geolocation-service';
-import RNMapView, {Circle, Marker} from 'react-native-maps';
+import RNMapView, {Circle, MapPressEvent, Marker} from 'react-native-maps';
 
 import {arrayOf, object} from 'prop-types';
 
@@ -10,7 +10,7 @@ import {MarkerT} from '../types';
 
 interface MapViewProps {
   markers: MarkerT[];
-  onPress: (e: any) => void;
+  onPress: (e: MapPressEvent) => void;
 }
 
 const propTypes = {

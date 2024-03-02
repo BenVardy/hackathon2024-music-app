@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Button, StyleSheet, View, Text} from 'react-native';
+import {Button, StyleSheet, View, Text, PixelRatio} from 'react-native';
 
 import MapView from './components/MapView';
 import {ASYNC_KEYS, MarkerT} from './types';
@@ -7,22 +7,53 @@ import {ASYNC_KEYS, MarkerT} from './types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import SpotifyAuth, {GetTrack} from './utils/SpotifyAuth';
+import {MapPressEvent} from 'react-native-maps';
+import SongSelect from './components/SongSelect';
+import {phyToLogPx} from './utils/pixelProblems';
+
+interface SongSelectInfo {
+  loc: {
+    top: number;
+    left: number;
+  };
+  markerId: string;
+}
 
 let id = 0;
 
 function App(): React.JSX.Element {
   const [markers, setMarkers] = useState<MarkerT[]>([]);
-  const [token, setToken] = useState<string | null>(null);
+  const [songSelectInfo, setSongSelectInfo] = useState<SongSelectInfo | null>(
+    null,
+  );
+  const [token, setToken] = useState<string | null>();
   const [trackInfo, setTrackInfo] = useState<any | null>(null);
 
-  const onMapPress = (e: any) => {
-    setMarkers([
-      ...markers,
-      {
-        coordinate: e.nativeEvent.coordinate,
-        key: `${id++}`,
+  const onMapPress = (e: MapPressEvent) => {
+    // Get the x, y position on screen in pixels.
+    const {position} = e.nativeEvent;
+
+    console.log(position);
+
+    setSongSelectInfo({
+      loc: {
+        top: phyToLogPx(position.y),
+        left: phyToLogPx(position.x),
       },
-    ]);
+      markerId: '',
+    });
+
+    // setMarkers([
+    //   ...markers,
+    //   {
+    //     coordinate: e.nativeEvent.coordinate,
+    //     key: `${id++}`,
+    //   },
+    // ]);
+  };
+
+  const handleSongSelected = (song: string | null) => {
+    setSongSelectInfo(null);
   };
 
   useEffect(() => {
@@ -96,6 +127,14 @@ function App(): React.JSX.Element {
         <View style={styles.buttonContainer}>
           <Button title="Clear Markers" onPress={handleClearMarkers} />
         </View>
+
+        {songSelectInfo && (
+          <SongSelect
+            // visible={songSelectVis}
+            loc={songSelectInfo.loc}
+            onSelected={handleSongSelected}
+          />
+        )}
       </View>
       {/* Button to get the Spotify token */}
       <Button title="Get Spotify Token" onPress={handleGetToken} />
