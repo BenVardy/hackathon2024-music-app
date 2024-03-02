@@ -1,12 +1,4 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
-import React from 'react';
-import type {PropsWithChildren} from 'react';
+import React, {useState} from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -15,6 +7,7 @@ import {
   Text,
   useColorScheme,
   View,
+  Button,
 } from 'react-native';
 
 import {
@@ -25,29 +18,32 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
+import SpotifyAuth, {GetTrack} from './utils/SpotifyAuth';
 
-function Section({children, title}: SectionProps): React.JSX.Element {
+global.Buffer = global.Buffer || require('buffer').Buffer;
+
+type SectionProps = {
+  title: string;
+};
+
+function Section({
+  title,
+  children,
+}: React.PropsWithChildren<SectionProps>): React.ReactElement {
   const isDarkMode = useColorScheme() === 'dark';
   return (
     <View style={styles.sectionContainer}>
       <Text
         style={[
           styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
+          {color: isDarkMode ? Colors.white : Colors.black},
         ]}>
         {title}
       </Text>
       <Text
         style={[
           styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
+          {color: isDarkMode ? Colors.light : Colors.dark},
         ]}>
         {children}
       </Text>
@@ -55,11 +51,36 @@ function Section({children, title}: SectionProps): React.JSX.Element {
   );
 }
 
-function App(): React.JSX.Element {
+function App(): React.ReactElement {
   const isDarkMode = useColorScheme() === 'dark';
+  const [token, setToken] = useState<string | null>(null);
+  const [trackInfo, setTrackInfo] = useState<any | null>(null);
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+  };
+
+  const handleGetToken = async () => {
+    try {
+      const fetchedToken = await SpotifyAuth();
+      setToken(fetchedToken);
+    } catch (error) {
+      console.error('Error fetching Spotify token:', error);
+    }
+  };
+
+  const handleGetTrack = async () => {
+    try {
+      if (!token) {
+        console.error('Token not available. Fetch token first.');
+        return;
+      }
+      const trackId = '11dFghVXANMlKmJXsNCbNl';
+      const fetchedTrackInfo = await GetTrack(token, trackId);
+      setTrackInfo(fetchedTrackInfo);
+    } catch (error) {
+      console.error('Error fetching track information:', error);
+    }
   };
 
   return (
@@ -73,9 +94,7 @@ function App(): React.JSX.Element {
         style={backgroundStyle}>
         <Header />
         <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
+          style={{backgroundColor: isDarkMode ? Colors.black : Colors.white}}>
           <Section title="Step One">
             Edit <Text style={styles.highlight}>App.tsx</Text> to change this
             screen and then come back to see your edits.
@@ -90,6 +109,28 @@ function App(): React.JSX.Element {
             Read the docs to discover what to do next:
           </Section>
           <LearnMoreLinks />
+
+          {/* Button to get the Spotify token */}
+          <Button title="Get Spotify Token" onPress={handleGetToken} />
+
+          {/* Display the Spotify token */}
+          {token && (
+            <View style={styles.infoContainer}>
+              <Text style={styles.infoText}>Spotify Token:</Text>
+              <Text>{token}</Text>
+            </View>
+          )}
+
+          {/* Button to get a track */}
+          <Button title="Get Track Info" onPress={handleGetTrack} />
+
+          {/* Display the track info */}
+          {trackInfo && (
+            <View style={styles.infoContainer}>
+              <Text style={styles.infoText}>Track Info:</Text>
+              <Text>{JSON.stringify(trackInfo, null, 2)}</Text>
+            </View>
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -112,6 +153,15 @@ const styles = StyleSheet.create({
   },
   highlight: {
     fontWeight: '700',
+  },
+  infoContainer: {
+    marginTop: 20,
+    padding: 10,
+    backgroundColor: '#f0f0f0',
+  },
+  infoText: {
+    fontWeight: 'bold',
+    marginBottom: 5,
   },
 });
 
