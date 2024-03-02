@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {StyleSheet, View, Alert} from 'react-native';
 import GeoLocation, {GeoPosition} from 'react-native-geolocation-service';
-import RNMapView, {Circle, LatLng, Marker} from 'react-native-maps';
+import RNMapView, {Circle, Marker} from 'react-native-maps';
 
 import {arrayOf, object} from 'prop-types';
 
