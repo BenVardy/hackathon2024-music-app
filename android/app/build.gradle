@@ -75,13 +75,15 @@ android {
     compileSdk rootProject.ext.compileSdkVersion
 
     namespace "com.hackathon2024musicapp"
+
+    def googleMapsApiKey = System.getenv("googleMapsApiKey")
     defaultConfig {
         applicationId "com.hackathon2024musicapp"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
-        // manifestPlacehoders = [googleMapsApiKey:googleMapsApiKey]
+        manifestPlaceholders = [googleMapsApiKey:googleMapsApiKey]
     }
     signingConfigs {
         debug {
