@@ -19,6 +19,7 @@ import {
   ImageSourcePropType,
   Button,
   ScrollView,
+  TouchableOpacity,
 } from 'react-native';
 
 interface DataItem {
@@ -29,14 +30,22 @@ interface DataItem {
   color: string;
 }
 
-const Gamer = require('./assets/images/gamer.png');
-const Puzzle = require('./assets/images/puzzle.png');
-const Headphones = require('./assets/images/headphones.png');
-const Idea = require('./assets/images/idea.png');
-const Coffee = require('./assets/images/coffee.png');
-const eightBit = require('./assets/images/eightball.png');
-const Star = require('./assets/images/star.png');
-const Bubble = require('./assets/images/text.png');
+import {useNavigation} from '@react-navigation/native';
+import {createNativeStackNavigator, NativeStackNavigationProp} from '@react-navigation/native-stack';
+
+
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
+
+
+const Gamer = require('../assets/images/gamer.png');
+const Puzzle = require('../assets/images/puzzle.png');
+const Headphones = require('../assets/images/headphones.png');
+const Idea = require('../assets/images/idea.png');
+const Coffee = require('../assets/images/coffee.png');
+const eightBit = require('../assets/images/eightball.png');
+const Star = require('../assets/images/star.png');
+const Bubble = require('../assets/images/text.png');
 
 
 const dataList: DataItem[] = [
@@ -50,8 +59,12 @@ const dataList: DataItem[] = [
   {key: '8', text: '8bit', image:eightBit, songs: 0, color:"#ff8cb4"},  
 ];
 
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from './App';
 
-function App(): React.JSX.Element {
+const Home: React.FC = () => {
+
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
   return (
     <SafeAreaView style={styles.background}>
@@ -61,13 +74,16 @@ function App(): React.JSX.Element {
         <Text style={styles.header}>PIXEL PATH</Text>
         <Text style={styles.with}>with</Text>
         <View style={styles.spotifyview}>
-          <Image style={styles.spotify} source={require('./assets/images/spotify.png')} />
+            <Image style={styles.spotify} source={require('../assets/images/spotify.png')} />
+          
         </View>
       </View>
       
       <Text style={styles.smallheader}>ADD TO MAP:</Text>
       <View style={styles.worldview}>
-        <Image style={styles.world} source={require('./assets/images/world.png')} />
+      <TouchableOpacity onPress={() => navigation.navigate('Map')}>
+        <Image style={styles.world} source={require('../assets/images/world.png') as ImageSourcePropType} />
+        </TouchableOpacity>
       </View>
       <Text style={styles.playlistheader}>YOUR PLAYLISTS:</Text>
       {dataList.map((item, i) => (
@@ -170,4 +186,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default App;
+export default Home;
