@@ -1,13 +1,13 @@
 import React, {useEffect, useState} from 'react';
-import {Button, StyleSheet, View, Text, PixelRatio} from 'react-native';
+import {Button, StyleSheet, View, Text} from 'react-native';
 
 import MapView from './components/MapView';
-import {ASYNC_KEYS, MarkerT} from './types';
+import {ASYNC_KEYS, DEFAULT_PLAYLISTS, PlaylistSet} from './types';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import SpotifyAuth, {GetTrack} from './utils/SpotifyAuth';
-import {MapPressEvent} from 'react-native-maps';
+import {LatLng, MapPressEvent} from 'react-native-maps';
 import SongSelect from './components/SongSelect';
 import {phyToLogPx} from './utils/pixelProblems';
 
@@ -16,13 +16,12 @@ interface SongSelectInfo {
     top: number;
     left: number;
   };
+  coordinate: LatLng;
   markerId: string;
 }
 
-let id = 0;
-
 function App(): React.JSX.Element {
-  const [markers, setMarkers] = useState<MarkerT[]>([]);
+  const [playlists, setPlaylists] = useState<PlaylistSet>({});
   const [songSelectInfo, setSongSelectInfo] = useState<SongSelectInfo | null>(
     null,
   );
@@ -31,7 +30,7 @@ function App(): React.JSX.Element {
 
   const onMapPress = (e: MapPressEvent) => {
     // Get the x, y position on screen in pixels.
-    const {position} = e.nativeEvent;
+    const {coordinate, position} = e.nativeEvent;
 
     console.log(position);
 
@@ -40,60 +39,20 @@ function App(): React.JSX.Element {
         top: phyToLogPx(position.y),
         left: phyToLogPx(position.x),
       },
+      coordinate,
       markerId: '',
     });
-
-    // setMarkers([
-    //   ...markers,
-    //   {
-    //     coordinate: e.nativeEvent.coordinate,
-    //     key: `${id++}`,
-    //   },
-    // ]);
   };
 
-  const handleSongSelected = (song: string | null) => {
+  const handleSongSelected = async (
+    song: string | null,
+    playlist: string | null,
+  ) => {
     setSongSelectInfo(null);
-  };
 
-  useEffect(() => {
-    const loadMarkers = async () => {
-      try {
-        const markersVal = await AsyncStorage.getItem(ASYNC_KEYS.MARKERS);
-        if (markersVal !== null) {
-          setMarkers(JSON.parse(markersVal));
-        }
-      } catch (e) {
-        // error.
-        console.log('Error loading data.');
-        console.log(e);
-      }
-    };
-
-    loadMarkers();
-  }, []);
-
-  useEffect(() => {
-    const storeData = async () => {
-      try {
-        await AsyncStorage.setItem(ASYNC_KEYS.MARKERS, JSON.stringify(markers));
-      } catch (e) {
-        // error.
-        console.log('Error saving data.');
-        console.log(e);
-      }
-    };
-
-    storeData();
-  }, [markers]);
-
-  const handleClearMarkers = async () => {
-    try {
-      await AsyncStorage.removeItem(ASYNC_KEYS.MARKERS);
-      setMarkers([]);
-    } catch (e) {
-      console.log('Error removing markers');
-      console.log(e);
+    if (song !== null && playlist !== null && songSelectInfo !== null) {
+      // Do the thing!
+      const {coordinate} = songSelectInfo;
     }
   };
 
@@ -120,13 +79,37 @@ function App(): React.JSX.Element {
     }
   };
 
+  // Get the things on load.
+  useEffect(() => {
+    (async () => {
+      try {
+        let newPlaylists: PlaylistSet;
+
+        const playlistsJSON = await AsyncStorage.getItem(ASYNC_KEYS.PLAYLISTS);
+        if (playlistsJSON !== null) {
+          newPlaylists = JSON.parse(playlistsJSON);
+        } else {
+          // Set to default playlists.
+          newPlaylists = DEFAULT_PLAYLISTS;
+
+          await AsyncStorage.setItem(
+            ASYNC_KEYS.PLAYLISTS,
+            JSON.stringify(newPlaylists),
+          );
+        }
+
+        setPlaylists(newPlaylists);
+      } catch (e) {
+        console.log('Error getting playlists');
+        console.log(e);
+      }
+    })();
+  }, []);
+
   return (
     <>
       <View style={styles.mainContainer}>
-        <MapView markers={markers} onPress={onMapPress} />
-        <View style={styles.buttonContainer}>
-          <Button title="Clear Markers" onPress={handleClearMarkers} />
-        </View>
+        <MapView playlists={playlists} onPress={onMapPress} />
 
         {songSelectInfo && (
           <SongSelect
@@ -164,10 +147,6 @@ function App(): React.JSX.Element {
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-  },
-  buttonContainer: {
-    position: 'absolute',
-    padding: 5,
   },
   infoContainer: {
     marginTop: 20,

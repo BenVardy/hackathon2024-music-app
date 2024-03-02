@@ -6,10 +6,10 @@ import RNMapView, {Circle, MapPressEvent, Marker} from 'react-native-maps';
 import {arrayOf, object} from 'prop-types';
 
 import {getLocationPermission} from '../utils/location';
-import {MarkerT} from '../types';
+import {PlaylistSet} from '../types';
 
 interface MapViewProps {
-  markers: MarkerT[];
+  playlists: PlaylistSet;
   onPress: (e: MapPressEvent) => void;
 }
 
@@ -17,7 +17,9 @@ const propTypes = {
   markers: arrayOf(object),
 };
 
-function MapView({markers, onPress}: MapViewProps): React.JSX.Element {
+function MapView(props: MapViewProps): React.JSX.Element {
+  const {playlists, onPress} = props;
+
   const [location, setLocation] = useState<GeoPosition | null>(null);
 
   const mapRef = useRef<RNMapView>(null);
@@ -123,13 +125,18 @@ function MapView({markers, onPress}: MapViewProps): React.JSX.Element {
           />
         </>
       )}
-      {markers.map(m => (
-        <Marker title={m.key} key={m.key} coordinate={m.coordinate}>
-          <View style={styles.dotContainer}>
-            <View style={styles.dot} />
-          </View>
-        </Marker>
-      ))}
+      {Object.entries(playlists).map(([key, playlist]) =>
+        playlist.songs.map((song, j) => (
+          <Marker
+            title="Thing"
+            key={`playlist-${key}-${j}`}
+            coordinate={song.marker}>
+            <View style={styles.dotContainer}>
+              <View style={styles.dot} />
+            </View>
+          </Marker>
+        )),
+      )}
     </RNMapView>
   );
 }

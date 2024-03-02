@@ -15,7 +15,7 @@ interface SongSelectProps {
     left: number;
   };
   // visible: boolean;
-  onSelected: (song: string | null) => void;
+  onSelected: (song: string | null, playlist: string | null) => void;
 }
 
 const defaultProps = {
