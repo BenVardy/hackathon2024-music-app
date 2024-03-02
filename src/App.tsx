@@ -1,12 +1,24 @@
 import React, {useEffect, useState} from 'react';
-import {Button, StyleSheet, View, Text} from 'react-native';
+import {
+  Button,
+  StyleSheet,
+  View,
+  Text,
+  TextInput,
+  Alert,
+  ScrollView,
+} from 'react-native';
 
 import MapView from './components/MapView';
 import {ASYNC_KEYS, MarkerT} from './types';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import SpotifyAuth, {GetTrack} from './utils/SpotifyAuth';
+import SpotifyAuth, {
+  GetTrack,
+  SearchTrack,
+  PlayTrack,
+} from './utils/SpotifyAuth';
 
 let id = 0;
 
@@ -14,6 +26,8 @@ function App(): React.JSX.Element {
   const [markers, setMarkers] = useState<MarkerT[]>([]);
   const [token, setToken] = useState<string | null>(null);
   const [trackInfo, setTrackInfo] = useState<any | null>(null);
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [searchResults, setSearchResults] = useState<any | null>(null);
 
   const onMapPress = (e: any) => {
     setMarkers([
@@ -89,6 +103,46 @@ function App(): React.JSX.Element {
     }
   };
 
+  const handleSearchTrack = async () => {
+    try {
+      if (!token) {
+        console.error('Token not available. Fetch token first.');
+        return;
+      }
+      if (!searchTerm) {
+        Alert.alert('Search Term Required', 'Please enter a search term.');
+        return;
+      }
+      const searchResults = await SearchTrack(token, searchTerm);
+      setTrackInfo(null); // Clear previous track info
+      setSearchResults(searchResults);
+    } catch (error) {
+      console.error('Error searching track:', error);
+    }
+  };
+
+  const handlePlayTrack = async () => {
+    try {
+      if (!token) {
+        console.error('Token not available. Fetch token first.');
+        return;
+      }
+      if (
+        !searchResults ||
+        !searchResults.tracks ||
+        searchResults.tracks.length === 0
+      ) {
+        console.error('No search results available.');
+        return;
+      }
+      const firstTrackId = searchResults.tracks.items[0].id;
+      await PlayTrack(token, firstTrackId);
+      console.log('Track is playing...');
+    } catch (error) {
+      console.error('Error playing track:', error);
+    }
+  };
+
   return (
     <>
       <View style={styles.mainContainer}>
@@ -97,6 +151,7 @@ function App(): React.JSX.Element {
           <Button title="Clear Markers" onPress={handleClearMarkers} />
         </View>
       </View>
+
       {/* Button to get the Spotify token */}
       <Button title="Get Spotify Token" onPress={handleGetToken} />
 
@@ -104,7 +159,9 @@ function App(): React.JSX.Element {
       {token && (
         <View style={styles.infoContainer}>
           <Text style={styles.infoText}>Spotify Token:</Text>
-          <Text>{token}</Text>
+          <ScrollView style={styles.infoScrollView}>
+            <Text>{token}</Text>
+          </ScrollView>
         </View>
       )}
 
@@ -115,7 +172,37 @@ function App(): React.JSX.Element {
       {trackInfo && (
         <View style={styles.infoContainer}>
           <Text style={styles.infoText}>Track Info:</Text>
-          <Text>{JSON.stringify(trackInfo, null, 2)}</Text>
+          <ScrollView style={styles.infoScrollView}>
+            <Text>{JSON.stringify(trackInfo, null, 2)}</Text>
+          </ScrollView>
+        </View>
+      )}
+
+      {/* Input and Button for Search Track */}
+      <View style={styles.searchContainer}>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter Search Term"
+          value={searchTerm}
+          onChangeText={setSearchTerm}
+        />
+        <Button title="Search Track" onPress={handleSearchTrack} />
+      </View>
+
+      {/* Button to Play Track */}
+      <View style={styles.playContainer}>
+        <Button title="Play Track" onPress={handlePlayTrack} />
+      </View>
+
+      {/* Display the search results */}
+      {searchResults && (
+        <View style={styles.infoContainer}>
+          <Text style={styles.infoText}>Search Results:</Text>
+          <ScrollView style={styles.infoScrollView}>
+            {searchResults.tracks.items.map((track: any) => (
+              <Text key={track.id}>{track.name}</Text>
+            ))}
+          </ScrollView>
         </View>
       )}
     </>
@@ -138,6 +225,28 @@ const styles = StyleSheet.create({
   infoText: {
     fontWeight: 'bold',
     marginBottom: 5,
+  },
+  searchContainer: {
+    marginTop: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+  },
+  input: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    padding: 10,
+    marginRight: 10,
+  },
+  playContainer: {
+    marginTop: 10,
+    paddingHorizontal: 20,
+  },
+  infoScrollView: {
+    maxHeight: 200, // Max height for scrollable info
+    marginBottom: 10,
   },
 });
 
