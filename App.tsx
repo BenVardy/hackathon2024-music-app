@@ -1,10 +1,3 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
 import React from 'react';
 import type {PropsWithChildren} from 'react';
 import {
@@ -15,6 +8,7 @@ import {
   Text,
   useColorScheme,
   View,
+  Button,
 } from 'react-native';
 
 import {
@@ -24,6 +18,8 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+
+import SpotifyAuth from './utils/SpotifyAuth';
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -90,6 +86,9 @@ function App(): React.JSX.Element {
             Read the docs to discover what to do next:
           </Section>
           <LearnMoreLinks />
+
+          {/* Add a button to play the epic song */}
+          <Button title="Play Epic Song" onPress={SpotifyAuth} />
         </View>
       </ScrollView>
     </SafeAreaView>
