@@ -1,8 +1,8 @@
 import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
-import Home from './Home';
-import Map from './Map';
+import Home from './views/Home';
+import Map from './views/Map';
 
 export type RootStackParamList = {
   Home: undefined;
@@ -11,7 +11,7 @@ export type RootStackParamList = {
 
 const Stack = createStackNavigator<RootStackParamList>();
 
-const App: React.FC = () => {
+function App(): React.JSX.Element {
   return (
     <NavigationContainer>
       <Stack.Navigator>
@@ -20,6 +20,6 @@ const App: React.FC = () => {
       </Stack.Navigator>
     </NavigationContainer>
   );
-};
+}
 
 export default App;
