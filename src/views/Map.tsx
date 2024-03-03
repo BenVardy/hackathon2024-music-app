@@ -20,7 +20,7 @@ interface SongSelectInfo {
   markerId: string;
 }
 
-function App(): React.JSX.Element {
+function Map(): React.JSX.Element {
   const [playlists, setPlaylists] = useState<PlaylistSet>({});
   const [songSelectInfo, setSongSelectInfo] = useState<SongSelectInfo | null>(
     null,
@@ -159,4 +159,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default App;
+export default Map;
