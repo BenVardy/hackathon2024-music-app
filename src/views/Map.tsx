@@ -7,10 +7,10 @@ import {
   TextInput,
   Alert,
   ScrollView,
-  Modal,
 } from 'react-native';
 
 import MapView from '../components/MapView';
+import {LatLng, MapPressEvent} from 'react-native-maps';
 import SpotifyAuthModal from '../components/SpotifyAuthModal';
 import SongSelect from '../components/SongSelect';
 import {phyToLogPx} from '../utils/pixelProblems';
