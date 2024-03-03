@@ -1,6 +1,6 @@
 import React from 'react';
 import {PlaylistSet} from '../types';
-import {Image, ImageSourcePropType, StyleSheet, Text, View} from 'react-native';
+import {Image, StyleSheet, Text, View} from 'react-native';
 import {TouchableOpacity} from 'react-native';
 import {getImages} from '../utils/getImages';
 

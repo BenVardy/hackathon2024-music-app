@@ -31,6 +31,12 @@ function Home(): React.JSX.Element {
 
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
+  const handlePlaylistPress = (playlistName: string) => {
+    navigation.navigate('Playlist', {
+      playlist: playlists[playlistName],
+    });
+  };
+
   return (
     <ScrollView style={styles.background}>
       <View style={styles.container}>
@@ -54,7 +60,10 @@ function Home(): React.JSX.Element {
         </TouchableWithoutFeedback>
       </View>
       <Text style={styles.playlistHeader}>YOUR PLAYLISTS:</Text>
-      <PlaylistList onPlaylistPress={() => {}} playlists={playlists} />
+      <PlaylistList
+        onPlaylistPress={handlePlaylistPress}
+        playlists={playlists}
+      />
     </ScrollView>
   );
 }
