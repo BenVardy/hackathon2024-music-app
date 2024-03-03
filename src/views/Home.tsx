@@ -53,7 +53,7 @@ const dataList: DataItem[] = [
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RootStackParamList} from '../App';
 
-const Home: React.FC = () => {
+function Home(): React.JSX.Element {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
   return (
@@ -94,7 +94,7 @@ const Home: React.FC = () => {
       ))}
     </ScrollView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   list: {
