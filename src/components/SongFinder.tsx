@@ -5,8 +5,10 @@ import {
   ScrollView,
   Text,
   TouchableOpacity,
+  StyleSheet,
+  Button,
 } from 'react-native';
-import AppButton from './AppButton';
+// import AppButton from './AppButton';
 import {SearchTrack} from '../utils/SpotifyAuth';
 import {Song} from '../types';
 
@@ -36,18 +38,19 @@ function SongFinder(props: SongFinderProps): React.JSX.Element {
   return (
     <View>
       <TextInput
+        style={styles.text}
         placeholder="Enter Search Term"
         value={searchTerm}
         onChangeText={setSearchTerm}
       />
-      <AppButton title="Search" onPress={handleSearchTrack} />
+      <Button title="Search" onPress={handleSearchTrack} />
       {songs && (
         <ScrollView>
           {songs.map(song => (
             <TouchableOpacity key={song.id} onPress={() => onSongPick(song)}>
               <View>
-                <Text>Name: {song.name}</Text>
-                <Text>Artist: {song.artist}</Text>
+                <Text style={styles.text}>Name: {song.name}</Text>
+                <Text style={styles.text}>Artist: {song.artist}</Text>
               </View>
             </TouchableOpacity>
           ))}
@@ -56,5 +59,14 @@ function SongFinder(props: SongFinderProps): React.JSX.Element {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  text: {
+    color: 'black',
+  },
+  searchBtn: {
+    padding: 4,
+  },
+});
 
 export default SongFinder;
