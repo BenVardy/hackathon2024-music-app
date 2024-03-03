@@ -16,6 +16,7 @@ function Playlist({route}: any): React.JSX.Element {
       </View>
       <ScrollView contentContainerStyle={styles.songsContainer}>
         {playlist.songs.length === 0 ? (
+          // eslint-disable-next-line react-native/no-inline-styles
           <Text style={{...styles.text, alignSelf: 'center'}}>
             No songs in playlist
           </Text>

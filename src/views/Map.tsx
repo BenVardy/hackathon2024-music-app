@@ -9,7 +9,7 @@ import SongSelect from '../components/SongSelect';
 import {phyToLogPx} from '../utils/pixelProblems';
 import {ASYNC_KEYS, Song} from '../types';
 import {getLocationPermission, closestSong} from '../utils/location';
-import {PlayTrackFromSongMarker, PlayTrack} from '../utils/SpotifyAuth';
+import {PlayTrackFromSongMarker} from '../utils/SpotifyAuth';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {UserContext} from '../utils/UserContext';
@@ -27,16 +27,13 @@ interface SongSelectInfo {
 
 function Map(): React.JSX.Element {
   let context = useContext(UserContext);
-  const {updateState, currentSong} = context;
+  const {updateState} = context;
   const playlists = context.playlists || {};
 
   const [songSelectInfo, setSongSelectInfo] = useState<SongSelectInfo | null>(
     null,
   );
   const [token, setToken] = useState<string | null>();
-  // const [trackInfo, setTrackInfo] = useState<any | null>(null);
-  // const [searchTerm, setSearchTerm] = useState<string>('');
-  // const [searchResults, setSearchResults] = useState<any | null>(null);
   const [spotifyAuthVisible, setSpotifyAuthVisible] = useState(true);
   const [location, setLocation] = useState<GeoPosition | null>(null);
 
@@ -117,61 +114,6 @@ function Map(): React.JSX.Element {
     setSongSelectInfo(null);
   };
 
-  // const handleGetTrack = async () => {
-  //   try {
-  //     if (!token) {
-  //       console.error('Token not available. Fetch token first.');
-  //       return;
-  //     }
-  //     const trackId = '2t0wwvR15fc3K1ey8OiOaN';
-  //     const fetchedTrackInfo = await GetTrack(token, trackId);
-  //     setTrackInfo(fetchedTrackInfo);
-  //   } catch (error) {
-  //     console.error('Error fetching track information:', error);
-  //   }
-  // };
-
-  // const handleSearchTrack = async () => {
-  //   try {
-  //     if (!token) {
-  //       console.error('Token not available. Fetch token first.');
-  //       return;
-  //     }
-  //     if (!searchTerm) {
-  //       Alert.alert('Search Term Required', 'Please enter a search term.');
-  //       return;
-  //     }
-  //     const searchResults = await SearchTrack(token, searchTerm);
-  //     setTrackInfo(null); // Clear previous track info
-  //     setSearchResults(searchResults);
-  //   } catch (error) {
-  //     console.error('Error searching track:', error);
-  //   }
-  // };
-
-  // const handlePlayTrack = async () => {
-  //   try {
-  //     if (!token) {
-  //       console.error('Token not available. Fetch token first.');
-  //       return;
-  //     }
-  //     if (
-  //       !searchResults ||
-  //       !searchResults.tracks ||
-  //       searchResults.tracks.length === 0
-  //     ) {
-  //       console.error('No search results available.');
-  //       return;
-  //     }
-  //     const firstTrackId = searchResults.tracks.items[0].id;
-  //     console.log('Playing track:', firstTrackId);
-  //     await PlayTrack(token, firstTrackId);
-  //     console.log('Track is playing...');
-  //   } catch (error) {
-  //     console.error('Error playing track:', error);
-  //   }
-  // };
-
   useState(() => {
     (async () => {
       try {
@@ -239,8 +181,8 @@ function Map(): React.JSX.Element {
     const handleClosestSong = async () => {
       // Create latlng object
       let latlng: LatLng = {
-        latitude: location?.coords.latitude,
-        longitude: location?.coords.longitude,
+        latitude: location?.coords.latitude || 0,
+        longitude: location?.coords.longitude || 0,
       };
 
       let song = closestSong(latlng, playlists);

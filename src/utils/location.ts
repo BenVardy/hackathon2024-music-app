@@ -2,6 +2,8 @@ import {Alert, PermissionsAndroid, Platform, ToastAndroid} from 'react-native';
 import {LatLng} from 'react-native-maps';
 import {PlaylistSet, SongMarker} from '../types';
 
+const MIN_DIST = 0.0000005045;
+
 /**
  * Get permissions for location services.
  *
@@ -42,6 +44,13 @@ export async function getLocationPermission(): Promise<boolean> {
   return false;
 }
 
+/**
+ * Get the closest song.
+ *
+ * @param myCoords My current coordinates.
+ * @param playlists The playlists.
+ * @returns The closest song or null of nothing is in range.
+ */
 export function closestSong(
   myCoords: LatLng,
   playlists: PlaylistSet,
@@ -56,7 +65,7 @@ export function closestSong(
       const distance =
         Math.pow(marker.latitude - myCoords.latitude, 2) +
         Math.pow(marker.longitude - myCoords.longitude, 2);
-      if (distance < 0.0000005045 && distance < smallestDistance) {
+      if (distance < MIN_DIST && distance < smallestDistance) {
         smallestDistance = distance;
         closestSongRes = song;
       }

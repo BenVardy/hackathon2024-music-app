@@ -10,7 +10,6 @@ import {arrayOf, object} from 'prop-types';
 
 import {getLocationPermission} from '../utils/location';
 import {PlaylistSet} from '../types';
-// import {getImages} from '../utils/getImages';
 
 interface MapViewProps {
   playlists: PlaylistSet;

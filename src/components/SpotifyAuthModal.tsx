@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Button, Modal, View, LogBox} from 'react-native';
+import {Button, Modal, View, LogBox, StyleSheet} from 'react-native';
 import {WebView} from 'react-native-webview';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {ASYNC_KEYS} from '../types';
@@ -7,12 +7,13 @@ import {ASYNC_KEYS} from '../types';
 global.Buffer = require('buffer').Buffer;
 
 interface SpotifyAuthProps {
+  visible: boolean;
+  onClose: () => void;
   onDone: () => void;
 }
 
-const SpotifyAuthModal = ({visible, onClose, onDone}: any) => {
+const SpotifyAuthModal = ({visible, onClose, onDone}: SpotifyAuthProps) => {
   const [authCode, setAuthCode] = useState<string | null>(null);
-  const [webViewVisible, setWebViewVisible] = useState(true);
 
   // Spotify API credentials
   const client_id = 'ff330d3bbc254f678bdd951b592ee810';
@@ -70,7 +71,7 @@ const SpotifyAuthModal = ({visible, onClose, onDone}: any) => {
       visible={visible}
       animationType="slide"
       onRequestClose={() => onClose()}>
-      <View style={{flex: 1}}>
+      <View style={styles.container}>
         <WebView
           source={{uri: authUrl}}
           onNavigationStateChange={handleNavigationStateChange}
@@ -85,5 +86,11 @@ const SpotifyAuthModal = ({visible, onClose, onDone}: any) => {
     </Modal>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});
 
 export default SpotifyAuthModal;

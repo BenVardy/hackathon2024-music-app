@@ -8,7 +8,6 @@ import {
   StyleSheet,
   Button,
 } from 'react-native';
-// import AppButton from './AppButton';
 import {SearchTrack} from '../utils/SpotifyAuth';
 import {Song} from '../types';
 
