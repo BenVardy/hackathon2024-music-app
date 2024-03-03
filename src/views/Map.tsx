@@ -27,6 +27,8 @@ interface SongSelectInfo {
   };
   coordinate: LatLng;
   markerId: string;
+  songIdx: number;
+  oldPlaylist?: string;
 }
 
 function Map(): React.JSX.Element {
@@ -54,6 +56,7 @@ function Map(): React.JSX.Element {
         },
         coordinate,
         markerId: '',
+        songIdx: -1,
       });
     } else {
       setSongSelectInfo(null);
@@ -64,14 +67,50 @@ function Map(): React.JSX.Element {
     song: string | null,
     playlist: string | null,
   ) => {
-    setSongSelectInfo(null);
-
     if (song !== null && playlist !== null && songSelectInfo !== null) {
       // Do the thing!
-      const {coordinate} = songSelectInfo;
-    } else {
-      setSongSelectInfo(null);
+      const {coordinate, songIdx, oldPlaylist} = songSelectInfo;
+
+      if (oldPlaylist !== undefined) {
+        if (songIdx === -1) {
+          console.log('Must have a song idx to have an old playlist');
+          return;
+        }
+
+        const oldPlaylistSongs = playlists[oldPlaylist].songs.slice();
+        const songs = oldPlaylistSongs.splice(songIdx, 1);
+        const newPlaylistSongs = playlists[playlist].songs.slice();
+
+        setPlaylists({
+          ...playlists,
+          [oldPlaylist]: {
+            ...playlists[oldPlaylist],
+            songs: oldPlaylistSongs,
+          },
+          [playlist]: {
+            ...playlists[playlist],
+            songs: newPlaylistSongs.concat(songs),
+          },
+        });
+      } else {
+        const playlistSongs = playlists[playlist].songs.slice();
+        if (songIdx === -1) {
+          playlistSongs.push({marker: coordinate});
+        } else {
+          // TODO: Handle.
+        }
+
+        setPlaylists({
+          ...playlists,
+          [playlist]: {
+            ...playlists[playlist],
+            songs: playlistSongs,
+          },
+        });
+      }
     }
+
+    setSongSelectInfo(null);
   };
 
   const handleGetTrack = async () => {
@@ -145,6 +184,7 @@ function Map(): React.JSX.Element {
             // visible={songSelectVis}
             loc={songSelectInfo.loc}
             onSelected={handleSongSelected}
+            playlists={playlists}
           />
         )}
       </View>
