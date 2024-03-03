@@ -35,7 +35,6 @@ function Map(): React.JSX.Element {
   // const [searchResults, setSearchResults] = useState<any | null>(null);
   const [spotifyAuthVisible, setSpotifyAuthVisible] = useState(false);
   const [location, setLocation] = useState<GeoPosition | null>(null);
-  const [observing, setObserving] = useState(false);
 
   const onMapPress = (e: MapPressEvent) => {
     // Get the x, y position on screen in pixels.
@@ -195,8 +194,6 @@ function Map(): React.JSX.Element {
       return;
     }
 
-    setObserving(true);
-
     watchId.current = GeoLocation.watchPosition(
       position => {
         setLocation(position);
@@ -225,7 +222,6 @@ function Map(): React.JSX.Element {
     if (watchId.current !== null) {
       GeoLocation.clearWatch(watchId.current);
       watchId.current = null;
-      setObserving(false);
     }
   };
 
