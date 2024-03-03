@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {StyleSheet, View, Modal, Dimensions} from 'react-native';
+import {StyleSheet, View, Modal} from 'react-native';
 import AppButton from './AppButton';
 import IconButton from './IconButton';
 import {ScrollView} from 'react-native-gesture-handler';

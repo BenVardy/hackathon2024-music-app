@@ -20,6 +20,11 @@ export interface Playlist {
 
 export type PlaylistSet = {[key: string]: Playlist};
 
+export interface AppState {
+  playlists?: PlaylistSet;
+  updateState: (newState?: Partial<AppState>) => void;
+}
+
 export const DEFAULT_PLAYLISTS: PlaylistSet = {
   eightBit: {
     text: '8bit',

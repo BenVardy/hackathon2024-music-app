@@ -7,27 +7,20 @@
 
 //https://www.makeuseof.com/react-native-custom-fonts-usage-guide/
 
-import React from 'react';
-import {
-  StyleSheet,
-  Text,
-  Image,
-  View,
-  ScrollView,
-  TouchableWithoutFeedback,
-} from 'react-native';
+import React, {useContext} from 'react';
+import {StyleSheet, Text, Image, View, ScrollView} from 'react-native';
 
 import {useNavigation} from '@react-navigation/native';
 
-// These need to be requires.
-
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RootStackParamList} from '../App';
-import {usePlaylists} from '../utils/usePlaylists';
 import PlaylistList from '../components/PlaylistList';
+import {UserContext} from '../utils/UserContext';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
 function Home(): React.JSX.Element {
-  const [playlists, _] = usePlaylists();
+  const context = useContext(UserContext);
+  const playlists = context.playlists || {};
 
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
@@ -52,12 +45,12 @@ function Home(): React.JSX.Element {
 
       <Text style={styles.smallHeader}>ADD TO MAP:</Text>
       <View style={styles.worldView}>
-        <TouchableWithoutFeedback onPress={() => navigation.navigate('Map')}>
+        <TouchableOpacity onPress={() => navigation.navigate('Map')}>
           <Image
             style={styles.world}
             source={require('../../assets/images/world.png')}
           />
-        </TouchableWithoutFeedback>
+        </TouchableOpacity>
       </View>
       <Text style={styles.playlistHeader}>YOUR PLAYLISTS:</Text>
       <PlaylistList

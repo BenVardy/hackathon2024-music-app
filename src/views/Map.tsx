@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 
 import MapView from '../components/MapView';
@@ -7,12 +7,12 @@ import GeoLocation, {GeoPosition} from 'react-native-geolocation-service';
 import SpotifyAuthModal from '../components/SpotifyAuthModal';
 import SongSelect from '../components/SongSelect';
 import {phyToLogPx} from '../utils/pixelProblems';
-import {usePlaylists} from '../utils/usePlaylists';
 import {ASYNC_KEYS, Song} from '../types';
 import {getLocationPermission, closestSong} from '../utils/location';
 import {PlayTrackFromSongMarker, PlayTrack} from '../utils/SpotifyAuth';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {UserContext} from '../utils/UserContext';
 
 interface SongSelectInfo {
   loc: {
@@ -26,7 +26,10 @@ interface SongSelectInfo {
 }
 
 function Map(): React.JSX.Element {
-  const [playlists, setPlaylists] = usePlaylists();
+  let context = useContext(UserContext);
+  const {updateState} = context;
+  const playlists = context.playlists || {};
+
   const [songSelectInfo, setSongSelectInfo] = useState<SongSelectInfo | null>(
     null,
   );
@@ -78,15 +81,17 @@ function Map(): React.JSX.Element {
         const songs = oldPlaylistSongs.splice(songIdx, 1);
         const newPlaylistSongs = playlists[playlist].songs.slice();
 
-        setPlaylists({
-          ...playlists,
-          [oldPlaylist]: {
-            ...playlists[oldPlaylist],
-            songs: oldPlaylistSongs,
-          },
-          [playlist]: {
-            ...playlists[playlist],
-            songs: newPlaylistSongs.concat(songs),
+        updateState({
+          playlists: {
+            ...playlists,
+            [oldPlaylist]: {
+              ...playlists[oldPlaylist],
+              songs: oldPlaylistSongs,
+            },
+            [playlist]: {
+              ...playlists[playlist],
+              songs: newPlaylistSongs.concat(songs),
+            },
           },
         });
       } else {
@@ -97,11 +102,13 @@ function Map(): React.JSX.Element {
           // TODO: Handle.
         }
 
-        setPlaylists({
-          ...playlists,
-          [playlist]: {
-            ...playlists[playlist],
-            songs: playlistSongs,
+        updateState({
+          playlists: {
+            ...playlists,
+            [playlist]: {
+              ...playlists[playlist],
+              songs: playlistSongs,
+            },
           },
         });
       }
