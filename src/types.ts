@@ -7,4 +7,5 @@ export interface MarkerT {
 
 export const ASYNC_KEYS = {
   MARKERS: 'MARKERS',
+  SPOTIFY_TOKEN: 'ACCESSTOKEN',
 };
