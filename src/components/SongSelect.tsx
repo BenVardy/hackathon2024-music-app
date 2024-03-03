@@ -17,6 +17,8 @@ interface SongSelectProps {
 }
 
 function SongSelect(props: SongSelectProps): React.JSX.Element {
+  const [songsVis, setSongsVis] = useState<boolean>(false);
+  const [selectedSong, setSelectedSong] = useState<string | null>(null);
   const [playlistsVis, setPlaylistsVis] = useState<boolean>(false);
   const [selectedPlaylist, setSelectedPlaylist] = useState<string | null>(null);
 
@@ -27,9 +29,12 @@ function SongSelect(props: SongSelectProps): React.JSX.Element {
     playlists,
   } = props;
 
-  const handlePlaylistBtn = () => {
-    setPlaylistsVis(true);
+  const handleSongsClose = () => {
+    setSongsVis(false);
   };
+
+  const handleSongPress = (song: string) => {};
+
   const handlePlaylistClose = () => {
     setPlaylistsVis(false);
   };
@@ -46,16 +51,23 @@ function SongSelect(props: SongSelectProps): React.JSX.Element {
           iconName="close"
           onPress={() => onSelected(null, selectedPlaylist)}
         />
-        <AppButton title="Select Song" />
+        <AppButton title="Select Song" onPress={() => setSongsVis(true)} />
         <AppButton
           title={
             selectedPlaylist !== null
               ? `Playlist: ${playlists[selectedPlaylist].text}`
               : 'Select Playlist'
           }
-          onPress={handlePlaylistBtn}
+          onPress={() => setPlaylistsVis(false)}
         />
       </View>
+      <Modal visible={songsVis} transparent={true} animationType="slide">
+        <View style={styles.pusher} />
+        <View style={styles.modalContainer}>
+          <IconButton iconName="close" onPress={handleSongsClose} />
+          <ScrollView></ScrollView>
+        </View>
+      </Modal>
       <Modal visible={playlistsVis} transparent={true} animationType="slide">
         <View style={styles.pusher} />
         <View style={styles.modalContainer}>
@@ -92,7 +104,5 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
 });
-
-console.log();
 
 export default SongSelect;

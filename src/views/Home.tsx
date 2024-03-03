@@ -13,7 +13,6 @@ import {
   Text,
   Image,
   View,
-  ImageSourcePropType,
   ScrollView,
   TouchableWithoutFeedback,
 } from 'react-native';
