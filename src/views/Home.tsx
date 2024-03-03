@@ -7,7 +7,7 @@
 
 //https://www.makeuseof.com/react-native-custom-fonts-usage-guide/
 
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {
   StyleSheet,
   Text,
@@ -17,14 +17,6 @@ import {
   ScrollView,
   TouchableWithoutFeedback,
 } from 'react-native';
-
-interface DataItem {
-  key: string;
-  text: string;
-  image: ImageSourcePropType;
-  songs: number;
-  color: string;
-}
 
 import {useNavigation} from '@react-navigation/native';
 
@@ -39,17 +31,6 @@ const IMAGES: {[key: string]: ImageSourcePropType} = {
   star: require('../../assets/images/star.png'),
   bubble: require('../../assets/images/text.png'),
 };
-
-// const dataList: DataItem[] = [
-// {key: '1', text: 'Gamer', image: Gamer, songs: 0, color: '#c7dcff'},
-// {key: '2', text: 'Puzzle', image: Puzzle, songs: 0, color: '#fbffc7'},
-// {key: '3', text: 'Headphones', image: Headphones, songs: 0, color: '#edc7ff'},
-// {key: '4', text: 'Idea', image: Idea, songs: 0, color: '#d6ffc7'},
-// {key: '5', text: 'Coffee', image: Coffee, songs: 0, color: '#ffd1c7'},
-// {key: '6', text: 'Star', image: Star, songs: 0, color: '#ffcb8c'},
-// {key: '7', text: 'Text', image: Bubble, songs: 0, color: '#8cafff'},
-// {key: '8', text: '8bit', image: eightBit, songs: 0, color: '#ff8cb4'},
-// ];
 
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RootStackParamList} from '../App';
@@ -90,7 +71,7 @@ function Home(): React.JSX.Element {
               <Image style={styles.spotify} source={IMAGES[item.image]} />
             </View>
             <Text style={styles.listText}>{item.text}</Text>
-            <Text style={styles.songText}>{'Songs: ' + item.songs}</Text>
+            <Text style={styles.songText}>{`Songs: ${item.songs.length}`}</Text>
           </View>
         </View>
       ))}

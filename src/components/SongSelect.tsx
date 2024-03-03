@@ -44,9 +44,7 @@ function SongSelect(props: SongSelectProps): React.JSX.Element {
   return (
     <>
       <View style={{...styles.container, top: loc.top, left: loc.left}}>
-        <TouchableOpacity onPress={() => onSelected(null)}>
-          <IconButton iconName="close" />
-        </TouchableOpacity>
+        <IconButton iconName="close" onPress={() => onSelected(null, null)} />
         <AppButton title="Select Song" />
         <AppButton title="Select Playlist" onPress={handlePlaylistBtn} />
       </View>

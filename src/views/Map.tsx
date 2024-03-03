@@ -28,18 +28,22 @@ function Map(): React.JSX.Element {
 
   const onMapPress = (e: MapPressEvent) => {
     // Get the x, y position on screen in pixels.
-    const {coordinate, position} = e.nativeEvent;
+    if (songSelectInfo === null) {
+      const {coordinate, position} = e.nativeEvent;
 
-    console.log(position);
+      console.log(position);
 
-    setSongSelectInfo({
-      loc: {
-        top: phyToLogPx(position.y),
-        left: phyToLogPx(position.x),
-      },
-      coordinate,
-      markerId: '',
-    });
+      setSongSelectInfo({
+        loc: {
+          top: phyToLogPx(position.y),
+          left: phyToLogPx(position.x),
+        },
+        coordinate,
+        markerId: '',
+      });
+    } else {
+      setSongSelectInfo(null);
+    }
   };
 
   const handleSongSelected = async (
@@ -51,6 +55,8 @@ function Map(): React.JSX.Element {
     if (song !== null && playlist !== null && songSelectInfo !== null) {
       // Do the thing!
       const {coordinate} = songSelectInfo;
+    } else {
+      setSongSelectInfo(null);
     }
   };
 
