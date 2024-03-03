@@ -29,15 +29,13 @@ function PlaylistList(props: PlaylistListProps): React.JSX.Element {
           key={`playlist-${key}`}
           onPress={() => onPlaylistPress(key)}
           style={styles.list}>
-          {/* <View > */}
           <View style={{...styles.iconContainer, backgroundColor: item.color}}>
             <View style={styles.icons}>
               <Image style={styles.spotify} source={IMAGES[item.image]} />
             </View>
             <Text style={styles.listText}>{item.text}</Text>
-            <Text style={styles.songText}>{`Songs: ${item.songs.length}`}</Text>
+            <Text style={styles.songText}>Songs: {item.songs.length}</Text>
           </View>
-          {/* </View> */}
         </TouchableOpacity>
       ))}
     </>

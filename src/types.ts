@@ -1,5 +1,11 @@
 import {LatLng} from 'react-native-maps';
 
+export interface Song {
+  id: string;
+  name: string;
+  artist: string;
+}
+
 export interface SongMarker {
   marker: LatLng;
 }

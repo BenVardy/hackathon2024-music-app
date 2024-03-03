@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Button, View} from 'react-native';
 import {WebView} from 'react-native-webview';
 

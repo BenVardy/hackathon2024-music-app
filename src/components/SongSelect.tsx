@@ -4,7 +4,8 @@ import AppButton from './AppButton';
 import IconButton from './IconButton';
 import {ScrollView} from 'react-native-gesture-handler';
 import PlaylistList from './PlaylistList';
-import {PlaylistSet} from '../types';
+import {PlaylistSet, Song} from '../types';
+import SongFinder from './SongFinder';
 
 interface SongSelectProps {
   loc: {
@@ -14,26 +15,28 @@ interface SongSelectProps {
   // visible: boolean;
   onSelected: (song: string | null, playlist: string | null) => void;
   playlists: PlaylistSet;
+  token: string;
 }
 
 function SongSelect(props: SongSelectProps): React.JSX.Element {
-  const [songsVis, setSongsVis] = useState<boolean>(false);
-  const [selectedSong, setSelectedSong] = useState<string | null>(null);
-  const [playlistsVis, setPlaylistsVis] = useState<boolean>(false);
-  const [selectedPlaylist, setSelectedPlaylist] = useState<string | null>(null);
-
   const {
     // visible,
     loc,
     onSelected,
     playlists,
+    token,
   } = props;
+
+  const [songsVis, setSongsVis] = useState<boolean>(false);
+  const [selectedSong, setSelectedSong] = useState<Song | null>(null);
+  const [playlistsVis, setPlaylistsVis] = useState<boolean>(false);
+  const [selectedPlaylist, setSelectedPlaylist] = useState<string | null>(null);
 
   const handleSongsClose = () => {
     setSongsVis(false);
   };
 
-  const handleSongPress = (song: string) => {};
+  const handleSongPick = (song: Song) => {};
 
   const handlePlaylistClose = () => {
     setPlaylistsVis(false);
@@ -65,7 +68,7 @@ function SongSelect(props: SongSelectProps): React.JSX.Element {
         <View style={styles.pusher} />
         <View style={styles.modalContainer}>
           <IconButton iconName="close" onPress={handleSongsClose} />
-          <ScrollView></ScrollView>
+          <SongFinder onSongPick={handleSongPick} token={token} />
         </View>
       </Modal>
       <Modal visible={playlistsVis} transparent={true} animationType="slide">

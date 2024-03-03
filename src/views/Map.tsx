@@ -37,9 +37,9 @@ function Map(): React.JSX.Element {
     null,
   );
   const [token, setToken] = useState<string | null>();
-  const [trackInfo, setTrackInfo] = useState<any | null>(null);
-  const [searchTerm, setSearchTerm] = useState<string>('');
-  const [searchResults, setSearchResults] = useState<any | null>(null);
+  // const [trackInfo, setTrackInfo] = useState<any | null>(null);
+  // const [searchTerm, setSearchTerm] = useState<string>('');
+  // const [searchResults, setSearchResults] = useState<any | null>(null);
   const [spotifyAuthVisible, setSpotifyAuthVisible] = useState(false);
 
   const onMapPress = (e: MapPressEvent) => {
@@ -113,60 +113,75 @@ function Map(): React.JSX.Element {
     setSongSelectInfo(null);
   };
 
-  const handleGetTrack = async () => {
-    try {
-      if (!token) {
-        console.error('Token not available. Fetch token first.');
-        return;
-      }
-      const trackId = '2t0wwvR15fc3K1ey8OiOaN';
-      const fetchedTrackInfo = await GetTrack(token, trackId);
-      setTrackInfo(fetchedTrackInfo);
-    } catch (error) {
-      console.error('Error fetching track information:', error);
-    }
-  };
+  // const handleGetTrack = async () => {
+  //   try {
+  //     if (!token) {
+  //       console.error('Token not available. Fetch token first.');
+  //       return;
+  //     }
+  //     const trackId = '2t0wwvR15fc3K1ey8OiOaN';
+  //     const fetchedTrackInfo = await GetTrack(token, trackId);
+  //     setTrackInfo(fetchedTrackInfo);
+  //   } catch (error) {
+  //     console.error('Error fetching track information:', error);
+  //   }
+  // };
 
-  const handleSearchTrack = async () => {
-    try {
-      if (!token) {
-        console.error('Token not available. Fetch token first.');
-        return;
-      }
-      if (!searchTerm) {
-        Alert.alert('Search Term Required', 'Please enter a search term.');
-        return;
-      }
-      const searchResults = await SearchTrack(token, searchTerm);
-      setTrackInfo(null); // Clear previous track info
-      setSearchResults(searchResults);
-    } catch (error) {
-      console.error('Error searching track:', error);
-    }
-  };
+  // const handleSearchTrack = async () => {
+  //   try {
+  //     if (!token) {
+  //       console.error('Token not available. Fetch token first.');
+  //       return;
+  //     }
+  //     if (!searchTerm) {
+  //       Alert.alert('Search Term Required', 'Please enter a search term.');
+  //       return;
+  //     }
+  //     const searchResults = await SearchTrack(token, searchTerm);
+  //     setTrackInfo(null); // Clear previous track info
+  //     setSearchResults(searchResults);
+  //   } catch (error) {
+  //     console.error('Error searching track:', error);
+  //   }
+  // };
 
-  const handlePlayTrack = async () => {
-    try {
-      if (!token) {
-        console.error('Token not available. Fetch token first.');
-        return;
+  // const handlePlayTrack = async () => {
+  //   try {
+  //     if (!token) {
+  //       console.error('Token not available. Fetch token first.');
+  //       return;
+  //     }
+  //     if (
+  //       !searchResults ||
+  //       !searchResults.tracks ||
+  //       searchResults.tracks.length === 0
+  //     ) {
+  //       console.error('No search results available.');
+  //       return;
+  //     }
+  //     const firstTrackId = searchResults.tracks.items[0].id;
+  //     console.log('Playing track:', firstTrackId);
+  //     await PlayTrack(token, firstTrackId);
+  //     console.log('Track is playing...');
+  //   } catch (error) {
+  //     console.error('Error playing track:', error);
+  //   }
+  // };
+
+  useState(() => {
+    (async () => {
+      try {
+        const res = await AsyncStorage.getItem(ASYNC_KEYS.SPOTIFY_TOKEN);
+        if (res === null) {
+          setSpotifyAuthVisible(true);
+        } else {
+          setToken(res);
+        }
+      } catch (e) {
+        console.log(e);
       }
-      if (
-        !searchResults ||
-        !searchResults.tracks ||
-        searchResults.tracks.length === 0
-      ) {
-        console.error('No search results available.');
-        return;
-      }
-      const firstTrackId = searchResults.tracks.items[0].id;
-      console.log('Playing track:', firstTrackId);
-      await PlayTrack(token, firstTrackId);
-      console.log('Track is playing...');
-    } catch (error) {
-      console.error('Error playing track:', error);
-    }
-  };
+    })();
+  });
 
   const handleSpotifyAuthDone = async () => {
     let authToken = await AsyncStorage.getItem(ASYNC_KEYS.SPOTIFY_TOKEN);
@@ -179,16 +194,16 @@ function Map(): React.JSX.Element {
       <View style={styles.mainContainer}>
         <MapView playlists={playlists} onPress={onMapPress} />
 
-        {songSelectInfo && (
+        {!!token && songSelectInfo && (
           <SongSelect
             // visible={songSelectVis}
             loc={songSelectInfo.loc}
             onSelected={handleSongSelected}
             playlists={playlists}
+            token={token}
           />
         )}
       </View>
-
       {/* Spotify Auth Modal */}
       <SpotifyAuthModal
         visible={spotifyAuthVisible}
@@ -197,26 +212,23 @@ function Map(): React.JSX.Element {
       />
 
       {/* Button to open Spotify Auth Modal */}
-      <Button
+      {/* <Button
         title="Open Spotify Auth"
         onPress={() => setSpotifyAuthVisible(true)}
-      />
-
+      /> */}
       {/* Button to get a track */}
-      <Button title="Get Track Info" onPress={handleGetTrack} />
-
+      {/* <Button title="Get Track Info" onPress={handleGetTrack} /> */}
       {/* Display the track info */}
-      {trackInfo && (
+      {/* {trackInfo && (
         <View style={styles.infoContainer}>
           <Text style={styles.infoText}>Track Info:</Text>
           <ScrollView style={styles.infoScrollView}>
             <Text>{JSON.stringify(trackInfo, null, 2)}</Text>
           </ScrollView>
         </View>
-      )}
-
+      )} */}
       {/* Input and Button for Search Track */}
-      <View style={styles.searchContainer}>
+      {/* <View style={styles.searchContainer}>
         <TextInput
           style={styles.input}
           placeholder="Enter Search Term"
@@ -224,15 +236,13 @@ function Map(): React.JSX.Element {
           onChangeText={setSearchTerm}
         />
         <Button title="Search Track" onPress={handleSearchTrack} />
-      </View>
-
+      </View> */}
       {/* Button to Play Track */}
-      <View style={styles.playContainer}>
+      {/* <View style={styles.playContainer}>
         <Button title="Play Track" onPress={handlePlayTrack} />
-      </View>
-
+      </View> */}
       {/* Display the search results */}
-      {searchResults && (
+      {/* {searchResults && (
         <View style={styles.infoContainer}>
           <Text style={styles.infoText}>Search Results:</Text>
           <ScrollView style={styles.infoScrollView}>
@@ -241,7 +251,7 @@ function Map(): React.JSX.Element {
             ))}
           </ScrollView>
         </View>
-      )}
+      )} */}
     </>
   );
 }
