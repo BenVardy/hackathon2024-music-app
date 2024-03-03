@@ -247,8 +247,7 @@ function Map(): React.JSX.Element {
       if (!song) {
         return;
       }
-      PlayTrackFromSongMarker(token, song, currentSong);
-      updateState({currentSong: song.song.id});
+      PlayTrackFromSongMarker(token, song);
     };
     handleClosestSong();
 

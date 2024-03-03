@@ -176,15 +176,42 @@ export const GetAvailableDevices = async (token: string) => {
   }
 };
 
+export const GetCurrentlyPlaying = async (token: string) => {
+  const options = {
+    headers: {
+      Authorization: 'Bearer ' + token,
+    },
+  };
+
+  try {
+    const response = await fetch(
+      'https://api.spotify.com/v1/me/player/currently-playing',
+      options,
+    );
+    if (!response.ok) {
+      throw new Error('Failed to get currently playing track');
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error getting currently playing track:', error);
+    return null;
+  }
+};
+
 export const PlayTrackFromSongMarker = async (
   token: string,
   marker: SongMarker,
-  currentSongID?: string,
 ) => {
   try {
-    if (currentSongID && currentSongID === marker.song.id) {
-      console.log('Song is already playing');
-      return;
+    let currentlyPlaying = await GetCurrentlyPlaying(token);
+    console.log('Currently playing:', currentlyPlaying);
+    if (currentlyPlaying !== null && currentlyPlaying?.item) {
+      if (currentlyPlaying.item.id === marker.song.id) {
+        console.log('Track is already playing');
+        return;
+      }
     }
     await PlayTrack(token, marker.song.id);
   } catch (error) {
