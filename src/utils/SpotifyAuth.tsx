@@ -3,7 +3,7 @@ import {Button, View} from 'react-native';
 import {WebView} from 'react-native-webview';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {ASYNC_KEYS} from '../types';
+import {ASYNC_KEYS, SongMarker} from '../types';
 
 global.Buffer = require('buffer').Buffer;
 
@@ -176,31 +176,14 @@ export const GetAvailableDevices = async (token: string) => {
   }
 };
 
-// Get playback state with /me/player get request then play song with /me/player put request
-export const PlaySelfless = async (token: string) => {
+export const PlayTrackFromSongMarker = async (
+  token: string,
+  marker: SongMarker,
+) => {
   try {
-    // Send pupt request to /me/player with device_ids from data and play = true
-    const playOptions = {
-      method: 'PUT',
-      headers: {
-        Authorization: 'Bearer ' + token,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        uris: ['spotify:track:4iV5W9uYEdYUVa79Axb7Rh'],
-      }),
-    };
-
-    const playResponse = await fetch(
-      'https://api.spotify.com/v1/me/player/play',
-      playOptions,
-    );
-    if (!playResponse.ok) {
-      throw new Error('Failed to play song');
-    }
+    await PlayTrack(token, marker.song.id);
   } catch (error) {
-    console.error('Error playing song:', error);
-    throw error;
+    console.error('Error playing track from song marker:', error);
   }
 };
 

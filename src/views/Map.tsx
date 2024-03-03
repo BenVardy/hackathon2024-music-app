@@ -9,7 +9,8 @@ import SongSelect from '../components/SongSelect';
 import {phyToLogPx} from '../utils/pixelProblems';
 import {usePlaylists} from '../utils/usePlaylists';
 import {ASYNC_KEYS, Song} from '../types';
-import {getLocationPermission} from '../utils/location';
+import {getLocationPermission, closestSong} from '../utils/location';
+import {PlayTrackFromSongMarker, PlayTrack} from '../utils/SpotifyAuth';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -33,7 +34,7 @@ function Map(): React.JSX.Element {
   // const [trackInfo, setTrackInfo] = useState<any | null>(null);
   // const [searchTerm, setSearchTerm] = useState<string>('');
   // const [searchResults, setSearchResults] = useState<any | null>(null);
-  const [spotifyAuthVisible, setSpotifyAuthVisible] = useState(false);
+  const [spotifyAuthVisible, setSpotifyAuthVisible] = useState(true);
   const [location, setLocation] = useState<GeoPosition | null>(null);
 
   const onMapPress = (e: MapPressEvent) => {
@@ -183,6 +184,7 @@ function Map(): React.JSX.Element {
     let authToken = await AsyncStorage.getItem(ASYNC_KEYS.SPOTIFY_TOKEN);
     setToken(authToken);
     setSpotifyAuthVisible(false); // Close the modal
+    // PlayTrack(token, '4iV5W9uYEdYUVa79Axb7Rh');
   };
 
   const watchId = useRef<number | null>(null);
@@ -227,11 +229,25 @@ function Map(): React.JSX.Element {
 
   useEffect(() => {
     startLocationUpdates();
+    const handleClosestSong = async () => {
+      // Create latlng object
+      let latlng: LatLng = {
+        latitude: location?.coords.latitude,
+        longitude: location?.coords.longitude,
+      };
+
+      let song = closestSong(latlng, playlists);
+      if (!song) {
+        return;
+      }
+      PlayTrackFromSongMarker(token, song);
+    };
+    handleClosestSong();
 
     return () => {
       stopLocationUpdates();
     };
-  }, []);
+  });
 
   return (
     <>
