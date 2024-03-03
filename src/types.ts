@@ -56,6 +56,7 @@ export const DEFAULT_PLAYLISTS: PlaylistSet = {
     color: '#ffcb8c',
     songs: [],
   },
+
   bubble: {
     text: 'Bubble',
     image: 'bubble',
@@ -66,4 +67,5 @@ export const DEFAULT_PLAYLISTS: PlaylistSet = {
 
 export const ASYNC_KEYS = {
   PLAYLISTS: 'playlists',
+  SPOTIFY_TOKEN: 'ACCESSTOKEN',
 };
