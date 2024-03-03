@@ -179,8 +179,13 @@ export const GetAvailableDevices = async (token: string) => {
 export const PlayTrackFromSongMarker = async (
   token: string,
   marker: SongMarker,
+  currentSongID?: string,
 ) => {
   try {
+    if (currentSongID && currentSongID === marker.song.id) {
+      console.log('Song is already playing');
+      return;
+    }
     await PlayTrack(token, marker.song.id);
   } catch (error) {
     console.error('Error playing track from song marker:', error);

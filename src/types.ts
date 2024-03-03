@@ -23,6 +23,7 @@ export type PlaylistSet = {[key: string]: Playlist};
 export interface AppState {
   playlists?: PlaylistSet;
   updateState: (newState?: Partial<AppState>) => void;
+  currentSong?: string;
 }
 
 export const DEFAULT_PLAYLISTS: PlaylistSet = {

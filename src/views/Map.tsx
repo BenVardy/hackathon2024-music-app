@@ -27,7 +27,7 @@ interface SongSelectInfo {
 
 function Map(): React.JSX.Element {
   let context = useContext(UserContext);
-  const {updateState} = context;
+  const {updateState, currentSong} = context;
   const playlists = context.playlists || {};
 
   const [songSelectInfo, setSongSelectInfo] = useState<SongSelectInfo | null>(
@@ -247,7 +247,8 @@ function Map(): React.JSX.Element {
       if (!song) {
         return;
       }
-      PlayTrackFromSongMarker(token, song);
+      PlayTrackFromSongMarker(token, song, currentSong);
+      updateState({currentSong: song.song.id});
     };
     handleClosestSong();
 

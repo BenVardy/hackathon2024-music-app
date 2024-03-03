@@ -56,7 +56,7 @@ export function closestSong(
       const distance =
         Math.pow(marker.latitude - myCoords.latitude, 2) +
         Math.pow(marker.longitude - myCoords.longitude, 2);
-      if (distance < 0.00004504504 && distance < smallestDistance) {
+      if (distance < 0.0000005045 && distance < smallestDistance) {
         smallestDistance = distance;
         closestSongRes = song;
       }
