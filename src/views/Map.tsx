@@ -1,13 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {
-  Button,
-  StyleSheet,
-  View,
-  Text,
-  TextInput,
-  Alert,
-  ScrollView,
-} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 
 import MapView from '../components/MapView';
 import {LatLng, MapPressEvent} from 'react-native-maps';
@@ -16,8 +8,7 @@ import SpotifyAuthModal from '../components/SpotifyAuthModal';
 import SongSelect from '../components/SongSelect';
 import {phyToLogPx} from '../utils/pixelProblems';
 import {usePlaylists} from '../utils/usePlaylists';
-import {GetTrack, SearchTrack, PlayTrack} from '../utils/SpotifyAuth';
-import {ASYNC_KEYS} from '../types';
+import {ASYNC_KEYS, Song} from '../types';
 import {getLocationPermission} from '../utils/location';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -67,8 +58,10 @@ function Map(): React.JSX.Element {
     }
   };
 
+  console.log(playlists);
+
   const handleSongSelected = async (
-    song: string | null,
+    song: Song | null,
     playlist: string | null,
   ) => {
     if (song !== null && playlist !== null && songSelectInfo !== null) {
@@ -99,7 +92,7 @@ function Map(): React.JSX.Element {
       } else {
         const playlistSongs = playlists[playlist].songs.slice();
         if (songIdx === -1) {
-          playlistSongs.push({marker: coordinate});
+          playlistSongs.push({song, marker: coordinate});
         } else {
           // TODO: Handle.
         }
@@ -185,7 +178,7 @@ function Map(): React.JSX.Element {
         console.log(e);
       }
     })();
-  });
+  }, []);
 
   const handleSpotifyAuthDone = async () => {
     let authToken = await AsyncStorage.getItem(ASYNC_KEYS.SPOTIFY_TOKEN);

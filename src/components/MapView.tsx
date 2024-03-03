@@ -10,6 +10,7 @@ import {arrayOf, object} from 'prop-types';
 
 import {getLocationPermission} from '../utils/location';
 import {PlaylistSet} from '../types';
+// import {getImages} from '../utils/getImages';
 
 interface MapViewProps {
   playlists: PlaylistSet;
@@ -134,7 +135,7 @@ function MapView(props: MapViewProps): React.JSX.Element {
             key={`playlist-${key}-${j}`}
             coordinate={song.marker}>
             <View style={styles.dotContainer}>
-              <View style={styles.dot} />
+              <View style={{...styles.dot, backgroundColor: playlist.color}} />
             </View>
           </Marker>
         )),

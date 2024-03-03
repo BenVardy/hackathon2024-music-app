@@ -7,6 +7,7 @@ export interface Song {
 }
 
 export interface SongMarker {
+  song: Song;
   marker: LatLng;
 }
 

@@ -13,7 +13,7 @@ interface SongSelectProps {
     left: number;
   };
   // visible: boolean;
-  onSelected: (song: string | null, playlist: string | null) => void;
+  onSelected: (song: Song | null, playlist: string | null) => void;
   playlists: PlaylistSet;
   token: string;
 }
@@ -32,19 +32,14 @@ function SongSelect(props: SongSelectProps): React.JSX.Element {
   const [playlistsVis, setPlaylistsVis] = useState<boolean>(false);
   const [selectedPlaylist, setSelectedPlaylist] = useState<string | null>(null);
 
-  const handleSongsClose = () => {
+  const handleSongPress = (song: Song) => {
+    setSelectedSong(song);
     setSongsVis(false);
-  };
-
-  const handleSongPick = (song: Song) => {};
-
-  const handlePlaylistClose = () => {
-    setPlaylistsVis(false);
   };
 
   const handlePlaylistPress = (playlist: string) => {
     setSelectedPlaylist(playlist);
-    handlePlaylistClose();
+    setPlaylistsVis(false);
   };
 
   return (
@@ -52,29 +47,34 @@ function SongSelect(props: SongSelectProps): React.JSX.Element {
       <View style={{...styles.container, top: loc.top, left: loc.left}}>
         <IconButton
           iconName="close"
-          onPress={() => onSelected(null, selectedPlaylist)}
+          onPress={() => onSelected(selectedSong, selectedPlaylist)}
         />
-        <AppButton title="Select Song" onPress={() => setSongsVis(true)} />
+        <AppButton
+          title={
+            selectedSong !== null ? `Song: ${selectedSong.name}` : 'Select Song'
+          }
+          onPress={() => setSongsVis(true)}
+        />
         <AppButton
           title={
             selectedPlaylist !== null
               ? `Playlist: ${playlists[selectedPlaylist].text}`
               : 'Select Playlist'
           }
-          onPress={() => setPlaylistsVis(false)}
+          onPress={() => setPlaylistsVis(true)}
         />
       </View>
       <Modal visible={songsVis} transparent={true} animationType="slide">
         <View style={styles.pusher} />
         <View style={styles.modalContainer}>
-          <IconButton iconName="close" onPress={handleSongsClose} />
-          <SongFinder onSongPick={handleSongPick} token={token} />
+          <IconButton iconName="close" onPress={() => setSongsVis(false)} />
+          <SongFinder onSongPick={handleSongPress} token={token} />
         </View>
       </Modal>
       <Modal visible={playlistsVis} transparent={true} animationType="slide">
         <View style={styles.pusher} />
         <View style={styles.modalContainer}>
-          <IconButton iconName="close" onPress={handlePlaylistClose} />
+          <IconButton iconName="close" onPress={() => setPlaylistsVis(false)} />
           <ScrollView>
             <PlaylistList
               onPlaylistPress={handlePlaylistPress}

@@ -2,22 +2,14 @@ import React from 'react';
 import {PlaylistSet} from '../types';
 import {Image, ImageSourcePropType, StyleSheet, Text, View} from 'react-native';
 import {TouchableOpacity} from 'react-native';
+import {getImages} from '../utils/getImages';
 
 interface PlaylistListProps {
   playlists: PlaylistSet;
   onPlaylistPress: (playlist: string) => void;
 }
 
-const IMAGES: {[key: string]: ImageSourcePropType} = {
-  gamer: require('../../assets/images/gamer.png'),
-  puzzle: require('../../assets/images/puzzle.png'),
-  headphones: require('../../assets/images/headphones.png'),
-  idea: require('../../assets/images/idea.png'),
-  coffee: require('../../assets/images/coffee.png'),
-  eightBit: require('../../assets/images/eightball.png'),
-  star: require('../../assets/images/star.png'),
-  bubble: require('../../assets/images/text.png'),
-};
+const IMAGES = getImages();
 
 function PlaylistList(props: PlaylistListProps): React.JSX.Element {
   const {playlists, onPlaylistPress} = props;

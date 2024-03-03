@@ -15,10 +15,12 @@ import {Song} from '../types';
 interface SongFinderProps {
   onSongPick: (song: Song) => void;
   token: string;
+  playlistColor?: string;
 }
 
 function SongFinder(props: SongFinderProps): React.JSX.Element {
   const {token, onSongPick} = props;
+  let playlistColor = props.playlistColor || '#c7dcff';
 
   const [songs, setSongs] = useState<Song[] | undefined>(undefined);
   const [searchTerm, setSearchTerm] = useState('');
@@ -48,7 +50,8 @@ function SongFinder(props: SongFinderProps): React.JSX.Element {
         <ScrollView>
           {songs.map(song => (
             <TouchableOpacity key={song.id} onPress={() => onSongPick(song)}>
-              <View>
+              <View
+                style={{...styles.container, backgroundColor: playlistColor}}>
                 <Text style={styles.text}>Name: {song.name}</Text>
                 <Text style={styles.text}>Artist: {song.artist}</Text>
               </View>
@@ -63,6 +66,12 @@ function SongFinder(props: SongFinderProps): React.JSX.Element {
 const styles = StyleSheet.create({
   text: {
     color: 'black',
+  },
+  container: {
+    padding: 4,
+    margin: 4,
+    // backgroundColor: '#c7dcff',
+    width: '100%',
   },
   searchBtn: {
     padding: 4,
