@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   Button,
   StyleSheet,
@@ -11,12 +11,14 @@ import {
 
 import MapView from '../components/MapView';
 import {LatLng, MapPressEvent} from 'react-native-maps';
+import GeoLocation, {GeoPosition} from 'react-native-geolocation-service';
 import SpotifyAuthModal from '../components/SpotifyAuthModal';
 import SongSelect from '../components/SongSelect';
 import {phyToLogPx} from '../utils/pixelProblems';
 import {usePlaylists} from '../utils/usePlaylists';
 import {GetTrack, SearchTrack, PlayTrack} from '../utils/SpotifyAuth';
 import {ASYNC_KEYS} from '../types';
+import {getLocationPermission} from '../utils/location';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -41,6 +43,8 @@ function Map(): React.JSX.Element {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [searchResults, setSearchResults] = useState<any | null>(null);
   const [spotifyAuthVisible, setSpotifyAuthVisible] = useState(false);
+  const [location, setLocation] = useState<GeoPosition | null>(null);
+  const [observing, setObserving] = useState(false);
 
   const onMapPress = (e: MapPressEvent) => {
     // Get the x, y position on screen in pixels.
@@ -174,10 +178,65 @@ function Map(): React.JSX.Element {
     setSpotifyAuthVisible(false); // Close the modal
   };
 
+  const watchId = useRef<number | null>(null);
+
+  const startLocationUpdates = async () => {
+    const hasPermission = await getLocationPermission();
+
+    if (!hasPermission) {
+      return;
+    }
+
+    setObserving(true);
+
+    watchId.current = GeoLocation.watchPosition(
+      position => {
+        setLocation(position);
+        console.log(position);
+      },
+      error => {
+        setLocation(null);
+        console.log(error);
+      },
+      {
+        accuracy: {
+          android: 'high',
+          ios: 'best',
+        },
+        enableHighAccuracy: true,
+        distanceFilter: 0,
+        interval: 5000,
+        fastestInterval: 2000,
+        forceLocationManager: true,
+        showLocationDialog: true,
+      },
+    );
+  };
+
+  const stopLocationUpdates = () => {
+    if (watchId.current !== null) {
+      GeoLocation.clearWatch(watchId.current);
+      watchId.current = null;
+      setObserving(false);
+    }
+  };
+
+  useEffect(() => {
+    startLocationUpdates();
+
+    return () => {
+      stopLocationUpdates();
+    };
+  }, []);
+
   return (
     <>
       <View style={styles.mainContainer}>
-        <MapView playlists={playlists} onPress={onMapPress} />
+        <MapView
+          playlists={playlists}
+          onPress={onMapPress}
+          coords={location?.coords || null}
+        />
 
         {songSelectInfo && (
           <SongSelect
