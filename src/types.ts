@@ -5,17 +5,61 @@ export interface SongMarker {
 }
 
 export interface Playlist {
-  name: string;
-  icon: string;
+  text: string;
+  image: string;
+  color: string;
   songs: SongMarker[];
 }
 
 export type PlaylistSet = {[key: string]: Playlist};
 
 export const DEFAULT_PLAYLISTS: PlaylistSet = {
-  games: {
-    name: 'Games',
-    icon: '',
+  eightBit: {
+    text: '8bit',
+    image: 'eightBit',
+    color: '#ff8cb4',
+    songs: [],
+  },
+  gamer: {
+    text: 'Gamer',
+    image: 'gamer',
+    color: '#c7dcff',
+    songs: [],
+  },
+  puzzle: {
+    text: 'Puzzle',
+    image: 'puzzle',
+    color: '#fbffc7',
+    songs: [],
+  },
+  headphones: {
+    text: 'Headphones',
+    image: 'headphones',
+    color: '#edc7ff',
+    songs: [],
+  },
+  idea: {
+    text: 'Idea',
+    image: 'idea',
+    color: '#d6ffc7',
+    songs: [],
+  },
+  coffee: {
+    text: 'Coffee',
+    image: 'coffee',
+    color: '#ffd1c7',
+    songs: [],
+  },
+  star: {
+    text: 'Star',
+    image: 'star',
+    color: '#ffcb8c',
+    songs: [],
+  },
+  bubble: {
+    text: 'Bubble',
+    image: 'bubble',
+    color: '#8cafff',
     songs: [],
   },
 };

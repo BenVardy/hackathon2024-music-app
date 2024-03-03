@@ -7,7 +7,7 @@
 
 //https://www.makeuseof.com/react-native-custom-fonts-usage-guide/
 
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
   Text,
@@ -15,7 +15,6 @@ import {
   View,
   ImageSourcePropType,
   ScrollView,
-  TouchableOpacity,
   TouchableWithoutFeedback,
 } from 'react-native';
 
@@ -30,30 +29,35 @@ interface DataItem {
 import {useNavigation} from '@react-navigation/native';
 
 // These need to be requires.
-const Gamer = require('../../assets/images/gamer.png');
-const Puzzle = require('../../assets/images/puzzle.png');
-const Headphones = require('../../assets/images/headphones.png');
-const Idea = require('../../assets/images/idea.png');
-const Coffee = require('../../assets/images/coffee.png');
-const eightBit = require('../../assets/images/eightball.png');
-const Star = require('../../assets/images/star.png');
-const Bubble = require('../../assets/images/text.png');
+const IMAGES: {[key: string]: ImageSourcePropType} = {
+  gamer: require('../../assets/images/gamer.png'),
+  puzzle: require('../../assets/images/puzzle.png'),
+  headphones: require('../../assets/images/headphones.png'),
+  idea: require('../../assets/images/idea.png'),
+  coffee: require('../../assets/images/coffee.png'),
+  eightBit: require('../../assets/images/eightball.png'),
+  star: require('../../assets/images/star.png'),
+  bubble: require('../../assets/images/text.png'),
+};
 
-const dataList: DataItem[] = [
-  {key: '1', text: 'Gamer', image: Gamer, songs: 0, color: '#c7dcff'},
-  {key: '2', text: 'Puzzle', image: Puzzle, songs: 0, color: '#fbffc7'},
-  {key: '3', text: 'Headphones', image: Headphones, songs: 0, color: '#edc7ff'},
-  {key: '4', text: 'Idea', image: Idea, songs: 0, color: '#d6ffc7'},
-  {key: '5', text: 'Coffee', image: Coffee, songs: 0, color: '#ffd1c7'},
-  {key: '6', text: 'Star', image: Star, songs: 0, color: '#ffcb8c'},
-  {key: '7', text: 'Text', image: Bubble, songs: 0, color: '#8cafff'},
-  {key: '8', text: '8bit', image: eightBit, songs: 0, color: '#ff8cb4'},
-];
+// const dataList: DataItem[] = [
+// {key: '1', text: 'Gamer', image: Gamer, songs: 0, color: '#c7dcff'},
+// {key: '2', text: 'Puzzle', image: Puzzle, songs: 0, color: '#fbffc7'},
+// {key: '3', text: 'Headphones', image: Headphones, songs: 0, color: '#edc7ff'},
+// {key: '4', text: 'Idea', image: Idea, songs: 0, color: '#d6ffc7'},
+// {key: '5', text: 'Coffee', image: Coffee, songs: 0, color: '#ffd1c7'},
+// {key: '6', text: 'Star', image: Star, songs: 0, color: '#ffcb8c'},
+// {key: '7', text: 'Text', image: Bubble, songs: 0, color: '#8cafff'},
+// {key: '8', text: '8bit', image: eightBit, songs: 0, color: '#ff8cb4'},
+// ];
 
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RootStackParamList} from '../App';
+import {usePlaylists} from '../utils/usePlaylists';
 
 function Home(): React.JSX.Element {
+  const [playlists, _] = usePlaylists();
+
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
   return (
@@ -74,18 +78,16 @@ function Home(): React.JSX.Element {
         <TouchableWithoutFeedback onPress={() => navigation.navigate('Map')}>
           <Image
             style={styles.world}
-            source={
-              require('../../assets/images/world.png') as ImageSourcePropType
-            }
+            source={require('../../assets/images/world.png')}
           />
         </TouchableWithoutFeedback>
       </View>
       <Text style={styles.playlistHeader}>YOUR PLAYLISTS:</Text>
-      {dataList.map((item, i) => (
-        <View style={styles.list} key={`data-${i}`}>
+      {Object.entries(playlists).map(([key, item]) => (
+        <View style={styles.list} key={`playlist-${key}`}>
           <View style={{...styles.iconContainer, backgroundColor: item.color}}>
             <View style={styles.icons}>
-              <Image style={styles.spotify} source={item.image} />
+              <Image style={styles.spotify} source={IMAGES[item.image]} />
             </View>
             <Text style={styles.listText}>{item.text}</Text>
             <Text style={styles.songText}>{'Songs: ' + item.songs}</Text>
@@ -114,6 +116,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     paddingLeft: 20,
   },
+
   container: {
     flexDirection: 'row',
     alignItems: 'center',

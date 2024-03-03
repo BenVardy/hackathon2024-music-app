@@ -1,15 +1,13 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {Button, StyleSheet, View, Text} from 'react-native';
 
 import MapView from '../components/MapView';
-import {ASYNC_KEYS, DEFAULT_PLAYLISTS, PlaylistSet} from '../types';
-
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import SpotifyAuth, {GetTrack} from '../utils/SpotifyAuth';
 import {LatLng, MapPressEvent} from 'react-native-maps';
 import SongSelect from '../components/SongSelect';
 import {phyToLogPx} from '../utils/pixelProblems';
+import {usePlaylists} from '../utils/usePlaylists';
 
 interface SongSelectInfo {
   loc: {
@@ -21,7 +19,7 @@ interface SongSelectInfo {
 }
 
 function Map(): React.JSX.Element {
-  const [playlists, setPlaylists] = useState<PlaylistSet>({});
+  const [playlists, setPlaylists] = usePlaylists();
   const [songSelectInfo, setSongSelectInfo] = useState<SongSelectInfo | null>(
     null,
   );
@@ -78,33 +76,6 @@ function Map(): React.JSX.Element {
       console.error('Error fetching track information:', error);
     }
   };
-
-  // Get the things on load.
-  useEffect(() => {
-    (async () => {
-      try {
-        let newPlaylists: PlaylistSet;
-
-        const playlistsJSON = await AsyncStorage.getItem(ASYNC_KEYS.PLAYLISTS);
-        if (playlistsJSON !== null) {
-          newPlaylists = JSON.parse(playlistsJSON);
-        } else {
-          // Set to default playlists.
-          newPlaylists = DEFAULT_PLAYLISTS;
-
-          await AsyncStorage.setItem(
-            ASYNC_KEYS.PLAYLISTS,
-            JSON.stringify(newPlaylists),
-          );
-        }
-
-        setPlaylists(newPlaylists);
-      } catch (e) {
-        console.log('Error getting playlists');
-        console.log(e);
-      }
-    })();
-  }, []);
 
   return (
     <>
