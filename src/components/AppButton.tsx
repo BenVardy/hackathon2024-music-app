@@ -22,7 +22,7 @@ function AppButton(props: AppButtonProps): React.JSX.Element {
   return (
     <Touchable onPress={onPress}>
       <View style={styles.buttonView}>
-        <Text>{title}</Text>
+        <Text style={styles.text}>{title}</Text>
       </View>
     </Touchable>
   );
@@ -39,6 +39,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 8,
     paddingVertical: 4,
+  },
+  text: {
+    color: 'black',
   },
 });
 

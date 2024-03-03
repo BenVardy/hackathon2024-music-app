@@ -23,7 +23,7 @@ function IconButton(props: IconButtonProps): React.JSX.Element {
     <Touchable onPress={onPress}>
       <View style={styles.container}>
         <View style={styles.touchable}>
-          <Icon name={iconName} />
+          <Icon style={styles.icon} name={iconName} />
         </View>
       </View>
     </Touchable>
@@ -39,6 +39,9 @@ const styles = StyleSheet.create({
     borderRadius: 2,
     // flex: 1,
     alignSelf: 'center',
+  },
+  icon: {
+    color: 'black',
   },
 });
 
