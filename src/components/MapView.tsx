@@ -1,6 +1,9 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {StyleSheet, View, Alert} from 'react-native';
-import GeoLocation, {GeoPosition} from 'react-native-geolocation-service';
+import GeoLocation, {
+  GeoCoordinates,
+  GeoPosition,
+} from 'react-native-geolocation-service';
 import RNMapView, {Circle, MapPressEvent, Marker} from 'react-native-maps';
 
 import {arrayOf, object} from 'prop-types';
@@ -11,6 +14,7 @@ import {PlaylistSet} from '../types';
 interface MapViewProps {
   playlists: PlaylistSet;
   onPress: (e: MapPressEvent) => void;
+  coords: GeoCoordinates | null;
 }
 
 const propTypes = {
@@ -18,7 +22,7 @@ const propTypes = {
 };
 
 function MapView(props: MapViewProps): React.JSX.Element {
-  const {playlists, onPress} = props;
+  const {playlists, onPress, coords} = props;
 
   const [location, setLocation] = useState<GeoPosition | null>(null);
 
@@ -74,8 +78,6 @@ function MapView(props: MapViewProps): React.JSX.Element {
       });
     }
   }, [location]);
-
-  const coords = location?.coords || null;
 
   return (
     <RNMapView
